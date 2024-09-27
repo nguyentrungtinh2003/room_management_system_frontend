@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Url from "../Config/Url";
 import { ToastContainer, toast, Slide } from "react-toastify";
+import { UserContext } from "../Context/UserContext";
 
 const Login = () => {
   const [data, setData] = useState({});
+  const { setUser } = useContext(UserContext);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -25,11 +27,24 @@ const Login = () => {
         if (response.data.token) {
           const token = response.data.token;
           localStorage.setItem("token", token);
+          setUser({
+            username: response.data.username,
+            img: response.data.img,
+            id: response.data.id,
+            role: response.data.role,
+          });
+          //
+          localStorage.setItem("id", response.data.id);
+          localStorage.setItem("username", response.data.username);
+          localStorage.setItem("img", response.data.img);
+          localStorage.setItem("role", response.data.role);
+          //
           toast.success("Đăng nhập thành công!", {
             position: "top-right",
             autoClose: 3000,
             transition: Slide,
           });
+          console.log(setUser);
           setTimeout(() => {
             if (response.data.role == "ADMIN") {
               window.location.href = "/admin";
