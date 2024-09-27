@@ -5,6 +5,7 @@ import { ToastContainer, toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Register = () => {
+  const token = localStorage.getItem("token");
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -48,7 +49,7 @@ const Register = () => {
       .post(`${Url}/api/users/register`, form, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJBZG1pbiIsImlhdCI6MTcyNzQwNDY4OSwiZXhwIjoxNzI3NDkxMDg5fQ.ni2X77KqepvOZ2V5cd5a4bU9T2yiawWTP-VSozmMfQJdQPjVmnKKXLp334cYJq29`,
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
