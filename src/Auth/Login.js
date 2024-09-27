@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import Url from "../Config/Url";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 const Login = () => {
   const [data, setData] = useState({});
@@ -19,44 +20,73 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post(`${Url}/api/users/login`, formData, {
-        headers: {
-          Authorization: `Bearer `,
-        },
-      })
+      .post(`${Url}/api/users/login`, formData)
       .then((response) => {
-        setData(response.data);
+        if (response.data.token) {
+          const token = response.data.token;
+          localStorage.setItem("token", token);
+          toast.success("Đăng nhập thành công!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          setTimeout(() => {
+            if (response.data.role == "ADMIN") {
+              window.location.href = "/admin";
+            }
+            if (response.data.role == "TENANT") {
+              window.location.href = "/tenant";
+            }
+            if (response.data.role == "LANDLORD") {
+              window.location.href = "/landlord";
+            }
+          }, 3000);
+        } else {
+          toast.error("Tên đăng nhập hoặc mật khẩu không đúng!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+        }
       })
       .catch((error) => {
-        console.log("Login fail !");
+        toast.error("Tên đăng nhập hoặc mật khẩu không đúng!", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Slide,
+        });
       });
   };
 
   return (
     <>
-      <h2>Đăng nhập</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Tên đăng nhập:</label>
-        <input
-          type="text"
-          name="username"
-          required
-          value={formData.username}
-          onChange={handelInputChange}
-        />
-        <br />
-        <label>Mật khẩu:</label>
-        <input
-          type="password"
-          name="password"
-          required
-          value={formData.password}
-          onChange={handelInputChange}
-        />
-        <br />
-        <input type="submit" value="Submit" />
-      </form>
-      <h2>{data.username}</h2>
+      <ToastContainer />
+      <div className="container col-6">
+        <h2 className="text-center">Đăng nhập</h2>
+        <form onSubmit={handleSubmit}>
+          <label className="mb-2">Tên đăng nhập:</label>
+          <input
+            className="form-control"
+            type="text"
+            name="username"
+            required
+            value={formData.username}
+            onChange={handelInputChange}
+          />
+          <br />
+          <label className="mb-2">Mật khẩu:</label>
+          <input
+            className="form-control"
+            type="password"
+            name="password"
+            required
+            value={formData.password}
+            onChange={handelInputChange}
+          />
+          <br />
+          <input className="btn btn-primary" type="submit" value="Đăng nhập" />
+        </form>
+      </div>
     </>
   );
 };
