@@ -12,9 +12,9 @@ const Header = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-lg color-primary">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
+          <a className="navbar-brand" href="/">
             Phòng Trọ
           </a>
 
@@ -22,7 +22,7 @@ const Header = () => {
             {/* Biểu tượng Home bên trái */}
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="#">
+                <a className="nav-link" href="/">
                   <i className="fas fa-home"></i>
                 </a>
               </li>
@@ -31,7 +31,7 @@ const Header = () => {
           {/* Biểu tượng User bên phải */}
 
           <ul className="navbar-nav ml-auto">
-            {user ? (
+            {user.username != null ? (
               <>
                 <li className="nav-item">
                   <a
