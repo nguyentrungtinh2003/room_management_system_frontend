@@ -14,7 +14,7 @@ const Header = () => {
     <>
       <nav className="navbar navbar-expand-lg color-primary">
         <div className="container-fluid">
-          <a className="navbar-brand" href="/">
+          <a className="navbar-brand text-white" href="/">
             Phòng Trọ
           </a>
 
@@ -23,7 +23,7 @@ const Header = () => {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
                 <a className="nav-link" href="/">
-                  <i className="fas fa-home"></i>
+                  <i className="fas fa-home text-white"></i>
                 </a>
               </li>
             </ul>
@@ -72,7 +72,7 @@ const Header = () => {
                     }}
                     style={{ cursor: "pointer" }}
                   >
-                    <i className="fas fa-sign-out-alt"></i> Đăng xuất
+                    <i className="fas fa-sign-out-alt text-white"></i> Đăng xuất
                   </a>
                 </li>
               </>
@@ -80,7 +80,7 @@ const Header = () => {
               <>
                 <li className="nav-item active">
                   <a className="nav-link" href="/login">
-                    <i className="fas fa-user"></i> Đăng nhập
+                    <i className="fas fa-user text-white"></i> Đăng nhập
                   </a>
                 </li>
               </>

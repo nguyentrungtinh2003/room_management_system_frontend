@@ -1,218 +1,222 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Url from "../Config/Url";
 
 const Admin = () => {
+  const [users, setUsers] = useState([]);
+  // State quản lý mục được chọn
+  const [selectedItem, setSelectedItem] = useState("users");
+
+  // Hàm để xử lý khi người dùng chọn một mục từ danh sách
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${Url}/api/users/all`)
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.log("Get all users fail !", error);
+      });
+  }, []);
+
   return (
     <>
       <div className="row">
         <div className="col-3">
           <ul className="list-group mt-2">
-            <li className="list-group-item" aria-current="true">
+            <li
+              className={`list-group-item ${
+                selectedItem === "users" ? "active" : ""
+              }`}
+              onClick={() => handleItemClick("users")}
+            >
               Quản lí người dùng
             </li>
-            <li className="list-group-item">Quản lí dãy phòng</li>
-            <li className="list-group-item">Quản lí phòng</li>
-            <li className="list-group-item">Quản lí doanh thu</li>
-            <li className="list-group-item">Quản lí hoá đơn</li>
+            <li
+              className={`list-group-item ${
+                selectedItem === "rooms" ? "active" : ""
+              }`}
+              onClick={() => handleItemClick("rooms")}
+            >
+              Quản lí dãy phòng
+            </li>
+            <li
+              className={`list-group-item ${
+                selectedItem === "roomDetails" ? "active" : ""
+              }`}
+              onClick={() => handleItemClick("roomDetails")}
+            >
+              Quản lí phòng
+            </li>
+            <li
+              className={`list-group-item ${
+                selectedItem === "revenue" ? "active" : ""
+              }`}
+              onClick={() => handleItemClick("revenue")}
+            >
+              Quản lí doanh thu
+            </li>
+            <li
+              className={`list-group-item ${
+                selectedItem === "bills" ? "active" : ""
+              }`}
+              onClick={() => handleItemClick("bills")}
+            >
+              Quản lí hoá đơn
+            </li>
           </ul>
         </div>
         <div className="col-9">
-          <div className="row">
-            <div className="col-6">
-              <form className="d-flex mt-2" role="search">
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Tìm kiếm ..."
-                  aria-label="Search"
-                />
-                <button className="btn btn-primary" type="submit">
-                  <i className="fas fa-search"></i>
+          {/* Hiển thị bảng dựa trên mục được chọn */}
+          {selectedItem === "users" && (
+            <div>
+              <h3 className="mt-2">Quản lí người dùng</h3>
+              <a href="/addUser">
+                <button className="btn btn-primary">
+                  <i className="fas fa-add"></i>
                 </button>
-              </form>
+              </a>
+              <table className="table table-striped mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Họ tên</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Hình</th>
+                    <th scope="col">Xem</th>
+                    <th scope="col">Sửa</th>
+                    <th scope="col">Xoá</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => {
+                    return (
+                      <tr key={user.id}>
+                        <td>{user.id}</td>
+                        <td>{user.username}</td>
+                        <td>{user.email}</td>
+                        <td>{user.phoneNumber}</td>
+                        <td>
+                          <img
+                            src={`${Url}/uploads/${user.img}`}
+                            alt="User Avatar"
+                            style={{ width: "50px" }}
+                          />
+                        </td>
+                        <td>
+                          {" "}
+                          <a href={`/viewUser/${user.id}`}>
+                            <button className="btn btn-primary btn-sm me-2">
+                              <i className="fas fa-eye"></i>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <a href={`/editUser/${user.id}`}>
+                            <button className="btn btn-primary btn-sm me-2">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <button className="btn btn-danger btn-sm">
+                            <i className="fas fa-trash-alt"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          </div>
-          <table className="table table-striped mt-2">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td colSpan="2">Larry the Bird</td>
-                <td>@twitter</td>
-              </tr>
-            </tbody>
-          </table>
-          <nav aria-label="Page navigation example ">
-            <ul className="pagination ">
-              <li className="page-item ">
-                <a className="page-link " href="#" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link color-primary" href="#">
-                  1
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  2
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#">
-                  3
-                </a>
-              </li>
-              <li className="page-item">
-                <a className="page-link" href="#" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-          <div className="row">
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
+          )}
+          {selectedItem === "rooms" && (
+            <div>
+              <h3>Quản lí dãy phòng</h3>
+              {/* Nội dung form hoặc bảng cho quản lí dãy phòng */}
+              <a href="/addUser">
+                <button className="btn btn-primary">
+                  <i className="fas fa-add"></i>
+                </button>
+              </a>
+              <table className="table table-striped mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Tên dãy phòng</th>
+                    <th scope="col">Địa chỉ</th>
+                    <th scope="col">Hình</th>
+                    <th scope="col">Chủ trọ</th>
+                    <th scope="col">Xem</th>
+                    <th scope="col">Sửa</th>
+                    <th scope="col">Xoá</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => {
+                    return (
+                      <tr key={user.id}>
+                        <td>{user.id}</td>
+                        <td>{user.username}</td>
+                        <td>{user.email}</td>
+                        <td>{user.phoneNumber}</td>
+                        <td>
+                          <img
+                            src={`${Url}/uploads/${user.img}`}
+                            alt="User Avatar"
+                            style={{ width: "50px" }}
+                          />
+                        </td>
+                        <td>
+                          {" "}
+                          <a href={`/viewUser/${user.id}`}>
+                            <button className="btn btn-primary btn-sm me-2">
+                              <i className="fas fa-eye"></i>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <a href={`/editUser/${user.id}`}>
+                            <button className="btn btn-primary btn-sm me-2">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <button className="btn btn-danger btn-sm">
+                            <i className="fas fa-trash-alt"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
+          )}
+          {selectedItem === "roomDetails" && (
+            <div>
+              <h3>Quản lí phòng</h3>
+              {/* Nội dung form hoặc bảng cho quản lí phòng */}
             </div>
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
+          )}
+          {selectedItem === "revenue" && (
+            <div>
+              <h3>Quản lí doanh thu</h3>
+              {/* Nội dung form hoặc bảng cho quản lí doanh thu */}
             </div>
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
+          )}
+          {selectedItem === "bills" && (
+            <div>
+              <h3>Quản lí hoá đơn</h3>
+              {/* Nội dung form hoặc bảng cho quản lí hoá đơn */}
             </div>
-          </div>
-          <div className="row">
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="col-3">
-              <div className="card">
-                <img src="..." className="card-img-top" alt="..." />
-                <div className="card-body">
-                  <h5 className="card-title">Card title</h5>
-                  <p className="card-text">
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </p>
-                  <a href="#" className="btn btn-primary">
-                    Go somewhere
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </>

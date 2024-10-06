@@ -38,11 +38,12 @@
 }
 /* */
 .list-group-item:hover {
-  background-color: #fba62f;
+  background-color: #7793e8;
+  color: white;
   cursor: pointer;
 }
 
 .color-primary {
-  background-color: #fba62f;
+  background-color: #4169e1;
   color: white;
 }
