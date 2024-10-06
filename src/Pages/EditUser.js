@@ -3,8 +3,10 @@ import { Form, Button, Col, Row } from "react-bootstrap";
 import axios from "axios";
 import Url from "../Config/Url";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 const EditUser = () => {
+  const token = localStorage.getItem("token");
   const { id } = useParams();
   const [formData, setFormData] = useState({
     username: "",
@@ -21,7 +23,11 @@ const EditUser = () => {
     // Fetch user by ID when component mounts
     const getUserById = async () => {
       try {
-        const response = await axios.get(`${Url}/api/users/${id}`);
+        const response = await axios.get(`${Url}/api/users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const user = response.data;
         setFormData({
           username: user.username,
@@ -57,7 +63,9 @@ const EditUser = () => {
     userData.append("username", formData.username);
     userData.append("password", formData.password);
     userData.append("email", formData.email);
-    userData.append("img", formData.img);
+    if (formData.img) {
+      userData.append("img", formData.img);
+    }
     userData.append("phoneNumber", formData.phoneNumber);
     userData.append("citizenIdentification", formData.citizenIdentification);
     userData.append("address", formData.address);
@@ -69,7 +77,14 @@ const EditUser = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert("Cập nhật người dùng thành công!");
+      toast.success("Cập nhật người dùng thành công !", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Slide,
+      });
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 3000);
     } catch (error) {
       console.error("Có lỗi xảy ra khi cập nhật người dùng!", error);
     }
@@ -77,6 +92,7 @@ const EditUser = () => {
 
   return (
     <div className="container mt-4">
+      <ToastContainer />
       <h2 className="text-center mb-4">Cập nhật người dùng</h2>
       <Form onSubmit={handleSubmit}>
         <Row>

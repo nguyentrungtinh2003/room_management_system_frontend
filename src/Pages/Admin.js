@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Url from "../Config/Url";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -13,6 +14,10 @@ const Admin = () => {
   };
 
   useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = () => {
     axios
       .get(`${Url}/api/users/all`)
       .then((response) => {
@@ -21,11 +26,61 @@ const Admin = () => {
       .catch((error) => {
         console.log("Get all users fail !", error);
       });
-  }, []);
+  };
+
+  const handelDeleteUser = (id, name) => {
+    const confirmDelete = window.confirm(
+      `Bạn có muốn xoá người dùng ${name} không ?`
+    );
+    if (confirmDelete) {
+      axios
+        .delete(`${Url}/api/users/delete/${id}`)
+        .then((response) => {
+          console.log("Delete user success");
+          toast.success("Xoá người dùng thành công !", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          setTimeout(() => {
+            window.location.href = "/admin";
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log("Error delete user : ", error);
+        });
+    }
+  };
+
+  const [searchItem, setSearchItem] = useState("");
+  const handelInputSearchChange = (e) => {
+    setSearchItem(e.target.value);
+  };
+
+  const handelSearchUser = (e) => {
+    e.preventDefault();
+    if (searchItem.trim() == "") {
+      fetchUsers();
+    } else {
+      axios
+        .get(`${Url}/api/users/search?username=${searchItem}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((response) => {
+          setUsers(response.data);
+        })
+        .catch((error) => {
+          console.log("Search user fail!", error);
+        });
+    }
+  };
 
   return (
     <>
       <div className="row">
+        <ToastContainer />
         <div className="col-3">
           <ul className="list-group mt-2">
             <li
@@ -75,8 +130,26 @@ const Admin = () => {
           {selectedItem === "users" && (
             <div>
               <h3 className="mt-2">Quản lí người dùng</h3>
+              <div className="row mt-2">
+                <div className="col-6">
+                  <form onSubmit={handelSearchUser} className="d-flex mt-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Tìm kiếm ..."
+                      value={searchItem}
+                      onChange={handelInputSearchChange}
+                      required
+                    />
+
+                    <button className="btn btn-primary" type="submit">
+                      <i className="fas fa-search"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
               <a href="/addUser">
-                <button className="btn btn-primary">
+                <button className="btn btn-primary mt-2">
                   <i className="fas fa-add"></i>
                 </button>
               </a>
@@ -124,7 +197,12 @@ const Admin = () => {
                           </a>
                         </td>
                         <td>
-                          <button className="btn btn-danger btn-sm">
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() =>
+                              handelDeleteUser(user.id, user.username)
+                            }
+                          >
                             <i className="fas fa-trash-alt"></i>
                           </button>
                         </td>

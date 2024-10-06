@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import axios from "axios";
 import Url from "../Config/Url";
-
+import { ToastContainer, toast, Slide } from "react-toastify";
 const AddUser = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -43,7 +43,14 @@ const AddUser = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert("User registered successfully!");
+      toast.success("Tạo người dùng thành công !", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Slide,
+      });
+      setTimeout(() => {
+        window.location.href = "/admin";
+      }, 3000);
     } catch (error) {
       console.error("There was an error registering the user!", error);
     }
@@ -51,6 +58,7 @@ const AddUser = () => {
 
   return (
     <div className="container mt-4">
+      <ToastContainer />
       <h2 className="text-center mb-4">Thêm người dùng</h2>
       <Form onSubmit={handleSubmit}>
         <Row>

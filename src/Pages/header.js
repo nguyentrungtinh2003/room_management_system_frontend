@@ -38,7 +38,7 @@ const Header = () => {
                     href={`http://localhost:3000/${
                       user.role ? user.role.toLowerCase() : ""
                     }`}
-                    className="nav-link"
+                    className="nav-link text-white"
                   >
                     <span>{user.username}</span>
                   </a>
@@ -72,7 +72,8 @@ const Header = () => {
                     }}
                     style={{ cursor: "pointer" }}
                   >
-                    <i className="fas fa-sign-out-alt text-white"></i> Đăng xuất
+                    <i className="fas fa-sign-out-alt text-white"></i>(" ")
+                    <span className="text-white">Đăng xuất</span>
                   </a>
                 </li>
               </>
@@ -80,7 +81,8 @@ const Header = () => {
               <>
                 <li className="nav-item active">
                   <a className="nav-link" href="/login">
-                    <i className="fas fa-user text-white"></i> Đăng nhập
+                    <i className="fas fa-user text-white"></i>
+                    <span className="text-white">Đăng nhập</span>
                   </a>
                 </li>
               </>
