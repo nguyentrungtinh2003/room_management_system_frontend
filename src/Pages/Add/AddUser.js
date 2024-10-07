@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import axios from "axios";
-import Url from "../Config/Url";
-import { useParams } from "react-router-dom";
+import Url from "../../Config/Url";
 import { ToastContainer, toast, Slide } from "react-toastify";
-
-const EditUser = () => {
-  const token = localStorage.getItem("token");
-  const { id } = useParams();
+const AddUser = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -18,34 +14,6 @@ const EditUser = () => {
     address: "",
     role: "",
   });
-
-  useEffect(() => {
-    // Fetch user by ID when component mounts
-    const getUserById = async () => {
-      try {
-        const response = await axios.get(`${Url}/api/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const user = response.data;
-        setFormData({
-          username: user.username,
-          password: "", // Mật khẩu không nên tự động điền
-          email: user.email,
-          img: null, // Không điền giá trị hình ảnh
-          phoneNumber: user.phoneNumber,
-          citizenIdentification: user.citizenIdentification,
-          address: user.address,
-          role: user.role,
-        });
-      } catch (error) {
-        console.error("Có lỗi xảy ra khi lấy dữ liệu người dùng!", error);
-      }
-    };
-
-    getUserById();
-  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -63,21 +31,19 @@ const EditUser = () => {
     userData.append("username", formData.username);
     userData.append("password", formData.password);
     userData.append("email", formData.email);
-    if (formData.img) {
-      userData.append("img", formData.img);
-    }
+    userData.append("img", formData.img);
     userData.append("phoneNumber", formData.phoneNumber);
     userData.append("citizenIdentification", formData.citizenIdentification);
     userData.append("address", formData.address);
     userData.append("role", formData.role);
 
     try {
-      await axios.put(`${Url}/api/users/update/${id}`, userData, {
+      await axios.post(`${Url}/api/users/register`, userData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Cập nhật người dùng thành công !", {
+      toast.success("Tạo người dùng thành công !", {
         position: "top-right",
         autoClose: 3000,
         transition: Slide,
@@ -86,14 +52,14 @@ const EditUser = () => {
         window.location.href = "/admin";
       }, 3000);
     } catch (error) {
-      console.error("Có lỗi xảy ra khi cập nhật người dùng!", error);
+      console.error("There was an error registering the user!", error);
     }
   };
 
   return (
     <div className="container mt-4">
       <ToastContainer />
-      <h2 className="text-center mb-4">Cập nhật người dùng</h2>
+      <h2 className="text-center mb-4">Thêm người dùng</h2>
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col md={6}>
@@ -118,6 +84,7 @@ const EditUser = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
+                required
               />
             </Form.Group>
           </Col>
@@ -204,16 +171,17 @@ const EditUser = () => {
                 type="file"
                 name="img"
                 onChange={handleFileChange}
+                required
               />
             </Form.Group>
           </Col>
         </Row>
         <Button variant="primary" type="submit">
-          <i className="fas fa-check"></i> Cập nhật
+          <i className="fas fa-check"></i> Thêm
         </Button>
       </Form>
     </div>
   );
 };
 
-export default EditUser;
+export default AddUser;

@@ -2,9 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Url from "../Config/Url";
 import { ToastContainer, toast, Slide } from "react-toastify";
+import { Badge } from "react-bootstrap";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
+  const [buildings, setBuildings] = useState([]);
   // State quản lý mục được chọn
   const [selectedItem, setSelectedItem] = useState("users");
 
@@ -15,6 +17,7 @@ const Admin = () => {
 
   useEffect(() => {
     fetchUsers();
+    fetchBuildings();
   }, []);
 
   const fetchUsers = () => {
@@ -25,6 +28,17 @@ const Admin = () => {
       })
       .catch((error) => {
         console.log("Get all users fail !", error);
+      });
+  };
+
+  const fetchBuildings = () => {
+    axios
+      .get(`${Url}/api/buildings/all`)
+      .then((response) => {
+        setBuildings(response.data);
+      })
+      .catch((error) => {
+        console.log("Get all buildings fail !", error);
       });
   };
 
@@ -52,18 +66,42 @@ const Admin = () => {
     }
   };
 
-  const [searchItem, setSearchItem] = useState("");
-  const handelInputSearchChange = (e) => {
-    setSearchItem(e.target.value);
+  const handelDeleteBuilding = (id, name) => {
+    const confirmDelete = window.confirm(
+      `Bạn có muốn xoá dãy phòng ${name} không ?`
+    );
+    if (confirmDelete) {
+      axios
+        .delete(`${Url}/api/buildings/delete/${id}`)
+        .then((response) => {
+          console.log("Delete building success");
+          toast.success("Xoá dãy phòng thành công !", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          setTimeout(() => {
+            window.location.href = "/admin";
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log("Error delete building : ", error);
+        });
+    }
   };
 
-  const handelSearchUser = (e) => {
+  const [searchUser, setSearchUser] = useState("");
+  const handleInputSearchUserChange = (e) => {
+    setSearchUser(e.target.value);
+  };
+
+  const handleSearchUser = (e) => {
     e.preventDefault();
-    if (searchItem.trim() == "") {
+    if (searchUser.trim() == "") {
       fetchUsers();
     } else {
       axios
-        .get(`${Url}/api/users/search?username=${searchItem}`, {
+        .get(`${Url}/api/users/search?username=${searchUser}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -77,11 +115,36 @@ const Admin = () => {
     }
   };
 
+  const [searchBuilding, setSearchBuilding] = useState("");
+  const handleInputSearchBuildingChange = (e) => {
+    setSearchBuilding(e.target.value);
+  };
+
+  const handleSearchBuilding = (e) => {
+    e.preventDefault();
+    if (searchBuilding.trim() == "") {
+      fetchBuildings();
+    } else {
+      axios
+        .get(`${Url}/api/buildings/search?name=${searchBuilding}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((response) => {
+          setBuildings(response.data);
+        })
+        .catch((error) => {
+          console.log("Search user fail!", error);
+        });
+    }
+  };
+
   return (
     <>
       <div className="row">
         <ToastContainer />
-        <div className="col-3">
+        <div className="col-2">
           <ul className="list-group mt-2">
             <li
               className={`list-group-item ${
@@ -125,21 +188,20 @@ const Admin = () => {
             </li>
           </ul>
         </div>
-        <div className="col-9">
+        <div className="col-10">
           {/* Hiển thị bảng dựa trên mục được chọn */}
           {selectedItem === "users" && (
             <div>
               <h3 className="mt-2">Quản lí người dùng</h3>
               <div className="row mt-2">
                 <div className="col-6">
-                  <form onSubmit={handelSearchUser} className="d-flex mt-2">
+                  <form onSubmit={handleSearchUser} className="d-flex mt-2">
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Tìm kiếm ..."
-                      value={searchItem}
-                      onChange={handelInputSearchChange}
-                      required
+                      placeholder="Nhập tên người dùng ..."
+                      value={searchUser}
+                      onChange={handleInputSearchUserChange}
                     />
 
                     <button className="btn btn-primary" type="submit">
@@ -161,6 +223,8 @@ const Admin = () => {
                     <th scope="col">Email</th>
                     <th scope="col">Phone</th>
                     <th scope="col">Hình</th>
+                    <th scope="col">Vai trò</th>
+                    <th scope="col">Trạng thái</th>
                     <th scope="col">Xem</th>
                     <th scope="col">Sửa</th>
                     <th scope="col">Xoá</th>
@@ -180,6 +244,18 @@ const Admin = () => {
                             alt="User Avatar"
                             style={{ width: "50px" }}
                           />
+                        </td>
+                        <td>{user.role}</td>
+                        <td>
+                          {user.enabled ? (
+                            <Badge bg="success">
+                              <i className="fas fa-check"></i>
+                            </Badge>
+                          ) : (
+                            <Badge bg="danger">
+                              <i className="fas fa-close"></i>
+                            </Badge>
+                          )}
                         </td>
                         <td>
                           {" "}
@@ -214,11 +290,28 @@ const Admin = () => {
             </div>
           )}
           {selectedItem === "rooms" && (
-            <div>
+            <div className="mt-2">
               <h3>Quản lí dãy phòng</h3>
               {/* Nội dung form hoặc bảng cho quản lí dãy phòng */}
-              <a href="/addUser">
-                <button className="btn btn-primary">
+              <div className="row mt-2">
+                <div className="col-6">
+                  <form onSubmit={handleSearchBuilding} className="d-flex mt-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Nhập tên dãy phòng ..."
+                      value={searchBuilding}
+                      onChange={handleInputSearchBuildingChange}
+                    />
+
+                    <button className="btn btn-primary" type="submit">
+                      <i className="fas fa-search"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <a href="/addBuilding">
+                <button className="btn btn-primary mt-2">
                   <i className="fas fa-add"></i>
                 </button>
               </a>
@@ -228,45 +321,60 @@ const Admin = () => {
                     <th scope="col">ID</th>
                     <th scope="col">Tên dãy phòng</th>
                     <th scope="col">Địa chỉ</th>
-                    <th scope="col">Hình</th>
                     <th scope="col">Chủ trọ</th>
+                    <th scope="col">Hình chủ trọ</th>
+                    <th scope="col">Hình dãy phòng</th>
                     <th scope="col">Xem</th>
                     <th scope="col">Sửa</th>
                     <th scope="col">Xoá</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => {
+                  {buildings.map((building) => {
                     return (
-                      <tr key={user.id}>
-                        <td>{user.id}</td>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>{user.phoneNumber}</td>
+                      <tr key={building.id}>
+                        <td>{building.id}</td>
+                        <td>{building.name}</td>
+                        <td>{building.address}</td>
+
+                        <td>{building.landlord.username}</td>
                         <td>
                           <img
-                            src={`${Url}/uploads/${user.img}`}
-                            alt="User Avatar"
+                            src={`${Url}/uploads/${building.landlord.img}`}
+                            alt="Landlord Avatar"
+                            style={{ width: "50px" }}
+                          />
+                        </td>
+
+                        <td>
+                          <img
+                            src={`${Url}/uploads/${building.img}`}
+                            alt="Building Avatar"
                             style={{ width: "50px" }}
                           />
                         </td>
                         <td>
                           {" "}
-                          <a href={`/viewUser/${user.id}`}>
+                          <a href={`/viewBuilding/${building.id}`}>
                             <button className="btn btn-primary btn-sm me-2">
                               <i className="fas fa-eye"></i>
                             </button>
                           </a>
                         </td>
                         <td>
-                          <a href={`/editUser/${user.id}`}>
+                          <a href={`/editBuilding/${building.id}`}>
                             <button className="btn btn-primary btn-sm me-2">
                               <i className="fas fa-edit"></i>
                             </button>
                           </a>
                         </td>
                         <td>
-                          <button className="btn btn-danger btn-sm">
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() =>
+                              handelDeleteBuilding(building.id, building.name)
+                            }
+                          >
                             <i className="fas fa-trash-alt"></i>
                           </button>
                         </td>

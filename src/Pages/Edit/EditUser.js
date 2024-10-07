@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import axios from "axios";
-import Url from "../Config/Url";
+import Url from "../../Config/Url";
+import { useParams } from "react-router-dom";
 import { ToastContainer, toast, Slide } from "react-toastify";
-const AddUser = () => {
+
+const EditUser = () => {
+  const token = localStorage.getItem("token");
+  const { id } = useParams();
+  const [imgUrl, setImgUrl] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -14,6 +19,35 @@ const AddUser = () => {
     address: "",
     role: "",
   });
+
+  useEffect(() => {
+    // Fetch user by ID when component mounts
+    const getUserById = async () => {
+      try {
+        const response = await axios.get(`${Url}/api/users/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const user = response.data;
+        setFormData({
+          username: user.username,
+          password: "", // Mật khẩu không nên tự động điền
+          email: user.email,
+          img: null, // Không điền giá trị hình ảnh
+          phoneNumber: user.phoneNumber,
+          citizenIdentification: user.citizenIdentification,
+          address: user.address,
+          role: user.role,
+        });
+        setImgUrl(user.img);
+      } catch (error) {
+        console.error("Có lỗi xảy ra khi lấy dữ liệu người dùng!", error);
+      }
+    };
+
+    getUserById();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,19 +65,21 @@ const AddUser = () => {
     userData.append("username", formData.username);
     userData.append("password", formData.password);
     userData.append("email", formData.email);
-    userData.append("img", formData.img);
+    if (formData.img) {
+      userData.append("img", formData.img);
+    }
     userData.append("phoneNumber", formData.phoneNumber);
     userData.append("citizenIdentification", formData.citizenIdentification);
     userData.append("address", formData.address);
     userData.append("role", formData.role);
 
     try {
-      await axios.post(`${Url}/api/users/register`, userData, {
+      await axios.put(`${Url}/api/users/update/${id}`, userData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Tạo người dùng thành công !", {
+      toast.success("Cập nhật người dùng thành công !", {
         position: "top-right",
         autoClose: 3000,
         transition: Slide,
@@ -52,14 +88,14 @@ const AddUser = () => {
         window.location.href = "/admin";
       }, 3000);
     } catch (error) {
-      console.error("There was an error registering the user!", error);
+      console.error("Có lỗi xảy ra khi cập nhật người dùng!", error);
     }
   };
 
   return (
     <div className="container mt-4">
       <ToastContainer />
-      <h2 className="text-center mb-4">Thêm người dùng</h2>
+      <h2 className="text-center mb-4">Cập nhật người dùng</h2>
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col md={6}>
@@ -84,7 +120,6 @@ const AddUser = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                required
               />
             </Form.Group>
           </Col>
@@ -119,18 +154,19 @@ const AddUser = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group controlId="formCitizenId" className="mb-3">
-              <Form.Label>CMND/CCCD</Form.Label>
+            <Form.Group controlId="formAddress" className="mb-3">
+              <Form.Label>Địa chỉ</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter citizen ID"
-                name="citizenIdentification"
-                value={formData.citizenIdentification}
+                placeholder="Enter address"
+                name="address"
+                value={formData.address}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
           </Col>
+
           <Col md={6}>
             <Form.Group controlId="formRole" className="mb-3">
               <Form.Label>Vai trò</Form.Label>
@@ -149,39 +185,42 @@ const AddUser = () => {
           </Col>
         </Row>
         <Row>
-          <Col md={12}>
-            <Form.Group controlId="formAddress" className="mb-3">
-              <Form.Label>Địa chỉ</Form.Label>
+          <Col md={6}>
+            <Form.Group controlId="formCitizenId" className="mb-3">
+              <Form.Label>CMND/CCCD</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter address"
-                name="address"
-                value={formData.address}
+                placeholder="Enter citizen ID"
+                name="citizenIdentification"
+                value={formData.citizenIdentification}
                 onChange={handleInputChange}
                 required
               />
             </Form.Group>
           </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
+
+          <Col md={6}>
             <Form.Group controlId="formImg" className="mb-3">
               <Form.Label>Hình</Form.Label>
               <Form.Control
                 type="file"
                 name="img"
                 onChange={handleFileChange}
-                required
               />
             </Form.Group>
+            <img
+              src={`${Url}/uploads/${imgUrl}`}
+              style={{ width: "200px" }}
+            ></img>
           </Col>
         </Row>
-        <Button variant="primary" type="submit">
-          <i className="fas fa-check"></i> Thêm
+
+        <Button variant="primary" type="submit" className="mt-2">
+          <i className="fas fa-check"></i> Cập nhật
         </Button>
       </Form>
     </div>
   );
 };
 
-export default AddUser;
+export default EditUser;

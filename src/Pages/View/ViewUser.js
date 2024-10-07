@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Url from "../Config/Url";
+import Url from "../../Config/Url";
 import { Card, Row, Col } from "react-bootstrap";
 
 const ViewUser = () => {

@@ -10,9 +10,12 @@ import "react-toastify/dist/ReactToastify.css";
 import Register from "./Auth/Register";
 import Admin from "./Pages/Admin";
 import Tenant from "./Pages/Tenant";
-import ViewUser from "./Pages/ViewUser";
-import AddUser from "./Pages/AddUser";
-import EditUser from "./Pages/EditUser";
+import ViewUser from "./Pages/View/ViewUser";
+import AddUser from "./Pages/Add/AddUser";
+import EditUser from "./Pages/Edit/EditUser";
+import AddBuilding from "./Pages/Add/AddBuilding";
+import ViewBuilding from "./Pages/View/ViewBuilding";
+import EditBuilding from "./Pages/Edit/EditBuilding";
 
 function App() {
   return (
@@ -27,6 +30,9 @@ function App() {
         <Route path="/viewUser/:id" element={<ViewUser />} />
         <Route path="/addUser" element={<AddUser />} />
         <Route path="/editUser/:id" element={<EditUser />} />
+        <Route path="/addBuilding" element={<AddBuilding />} />
+        <Route path="/viewBuilding/:id" element={<ViewBuilding />} />
+        <Route path="/editBuilding/:id" element={<EditBuilding />} />
       </Routes>
     </Router>
   );

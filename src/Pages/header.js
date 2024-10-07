@@ -73,7 +73,7 @@ const Header = () => {
                     style={{ cursor: "pointer" }}
                   >
                     <i className="fas fa-sign-out-alt text-white"></i>(" ")
-                    <span className="text-white">Đăng xuất</span>
+                    {/* <span className="text-white">Đăng xuất</span> */}
                   </a>
                 </li>
               </>
@@ -82,7 +82,7 @@ const Header = () => {
                 <li className="nav-item active">
                   <a className="nav-link" href="/login">
                     <i className="fas fa-user text-white"></i>
-                    <span className="text-white">Đăng nhập</span>
+                    {/* <span className="text-white">Đăng nhập</span> */}
                   </a>
                 </li>
               </>
