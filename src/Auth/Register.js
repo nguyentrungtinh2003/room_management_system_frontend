@@ -69,7 +69,7 @@ const Register = () => {
   };
 
   return (
-    <div className="container mt-5 col-md-6">
+    <div className="container mt-5 col-md-6 shadow-lg">
       <ToastContainer />
       <h2 className="text-center mb-4">Đăng ký tài khoản</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">

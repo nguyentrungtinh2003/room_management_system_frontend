@@ -187,6 +187,11 @@ const Admin = () => {
               Quản lí hoá đơn
             </li>
           </ul>
+          <a href="/sendMail">
+            <button className="btn btn-primary mt-2">
+              <i className="fas fa-envelope"></i>
+            </button>
+          </a>
         </div>
         <div className="col-10">
           {/* Hiển thị bảng dựa trên mục được chọn */}
@@ -221,7 +226,7 @@ const Admin = () => {
                     <th scope="col">ID</th>
                     <th scope="col">Họ tên</th>
                     <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
+                    <th scope="col">SĐT</th>
                     <th scope="col">Hình</th>
                     <th scope="col">Vai trò</th>
                     <th scope="col">Trạng thái</th>
@@ -389,6 +394,88 @@ const Admin = () => {
             <div>
               <h3>Quản lí phòng</h3>
               {/* Nội dung form hoặc bảng cho quản lí phòng */}
+              <div className="row mt-2">
+                <div className="col-6">
+                  <form className="d-flex mt-2">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Nhập tên phòng ..."
+                    />
+
+                    <button className="btn btn-primary" type="submit">
+                      <i className="fas fa-search"></i>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <a href="/addBuilding">
+                <button className="btn btn-primary mt-2">
+                  <i className="fas fa-add"></i>
+                </button>
+              </a>
+              <table className="table table-striped mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Tên phòng</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Hình</th>
+                    <th scope="col">Dãy phòng</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Xem</th>
+                    <th scope="col">Sửa</th>
+                    <th scope="col">Xoá</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {buildings.map((building) => {
+                    return (
+                      <tr key={building.id}>
+                        <td>{building.id}</td>
+                        <td>Phòng 1</td>
+                        <td>1200000 VND</td>
+                        <td>
+                          <img
+                            src={`${Url}/uploads/${building.landlord.img}`}
+                            alt="Landlord Avatar"
+                            style={{ width: "50px" }}
+                          />
+                        </td>
+
+                        <td>Dãy phòng A</td>
+
+                        <td>Trống</td>
+                        <td>
+                          {" "}
+                          <a href={`/viewBuilding/${building.id}`}>
+                            <button className="btn btn-primary btn-sm me-2">
+                              <i className="fas fa-eye"></i>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <a href={`/editBuilding/${building.id}`}>
+                            <button className="btn btn-primary btn-sm me-2">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                          </a>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() =>
+                              handelDeleteBuilding(building.id, building.name)
+                            }
+                          >
+                            <i className="fas fa-trash-alt"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
           {selectedItem === "revenue" && (

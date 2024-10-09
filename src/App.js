@@ -16,6 +16,10 @@ import EditUser from "./Pages/Edit/EditUser";
 import AddBuilding from "./Pages/Add/AddBuilding";
 import ViewBuilding from "./Pages/View/ViewBuilding";
 import EditBuilding from "./Pages/Edit/EditBuilding";
+import ViewRoom from "./Pages/View/ViewRoom";
+import ForgotPassword from "./Auth/ForgotPassword";
+import ResetPassword from "./Auth/ResetPassword ";
+import SendMail from "./Auth/SendMail";
 
 function App() {
   return (
@@ -25,6 +29,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register-user" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/sendMail" element={<SendMail />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/tenant" element={<Tenant />} />
         <Route path="/viewUser/:id" element={<ViewUser />} />
@@ -33,6 +40,7 @@ function App() {
         <Route path="/addBuilding" element={<AddBuilding />} />
         <Route path="/viewBuilding/:id" element={<ViewBuilding />} />
         <Route path="/editBuilding/:id" element={<EditBuilding />} />
+        <Route path="/viewRoom/:id" element={<ViewRoom />} />
       </Routes>
     </Router>
   );

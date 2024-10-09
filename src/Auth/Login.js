@@ -3,6 +3,8 @@ import React, { useContext, useState } from "react";
 import Url from "../Config/Url";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import { UserContext } from "../Context/UserContext";
+import { Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [data, setData] = useState({});
@@ -76,7 +78,7 @@ const Login = () => {
   return (
     <>
       <ToastContainer />
-      <div className="container col-6">
+      <div className="container col-6 shadow-lg mt-5">
         <h2 className="text-center">Đăng nhập</h2>
         <form onSubmit={handleSubmit}>
           <label className="mb-2">Tên đăng nhập:</label>
@@ -99,7 +101,20 @@ const Login = () => {
             onChange={handelInputChange}
           />
           <br />
-          <input className="btn btn-primary" type="submit" value="Đăng nhập" />
+          <Button variant="primary" type="submit" className="m-2">
+            Đăng nhập
+          </Button>
+          <a href="/forgot-password">
+            <Button variant="primary" className="m-2">
+              Quên mật khẩu
+            </Button>
+          </a>
+
+          <div className="mt-2">
+            <Link to="/register">
+              <Button variant="secondary">Đăng ký</Button>
+            </Link>
+          </div>
         </form>
       </div>
     </>
