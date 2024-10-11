@@ -1,18 +1,53 @@
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Url from "../Config/Url";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import { UserContext } from "../Context/UserContext";
 import { Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Google from "./Google";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [data, setData] = useState({});
   const { setUser } = useContext(UserContext);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
+  useEffect(() => {
+    const fetchGoogleUser = async () => {
+      try {
+        const response = await axios.get(`${Url}/api/users/success`, {
+          withCredentials: true,
+        });
+        const { id, username, img, role } = response.data;
+
+        // Lưu thông tin vào localStorage
+        localStorage.setItem("id", id);
+        localStorage.setItem("username", username);
+        localStorage.setItem("img", img);
+        localStorage.setItem("role", role);
+
+        // Điều hướng dựa trên role
+        if (role === "ADMIN") {
+          navigate("/admin");
+        } else if (role === "TENANT") {
+          navigate("/tenant");
+        } else if (role === "LANDLORD") {
+          navigate("/landlord");
+        } else {
+        }
+      } catch (error) {
+        console.log("Error fetching Google user data", error);
+      }
+    };
+
+    fetchGoogleUser();
+  }, [navigate]);
 
   const handelInputChange = (e) => {
     const { name, value } = e.target;
@@ -104,6 +139,7 @@ const Login = () => {
           <Button variant="primary" type="submit" className="m-2">
             Đăng nhập
           </Button>
+          <Google />
           <a href="/forgot-password">
             <Button variant="primary" className="m-2">
               Quên mật khẩu

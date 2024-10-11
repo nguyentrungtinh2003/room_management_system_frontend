@@ -29,34 +29,62 @@ const ViewRoom = () => {
         <Card.Body>
           <Row className="mb-3">
             <Col md={6}>
-              <img
-                src={"https://via.placeholder.com/150"}
-                alt="Room"
-                className="img-fluid rounded shadow-sm"
-              />
+              {room.img && (
+                <img
+                  src={`${Url}/uploads/${room.img}`}
+                  alt="Room"
+                  className="img-fluid rounded shadow-sm"
+                />
+              )}
             </Col>
             <Col md={6}>
               <h4>
-                <strong>Tên phòng:</strong>
+                <strong>Tên phòng: </strong> {room.roomName}
               </h4>
               <p>
-                <strong>Mã số ID:</strong>
+                <strong>Mã số ID: </strong> {room.id}
               </p>
               <p>
-                <strong>Giá:</strong>
+                <strong>Giá: </strong> {room.rentPrice} VND
               </p>
               <p>
-                <strong>Dãy phòng:</strong>
+                <strong>Dãy phòng:</strong>{" "}
+                {room.building && room.building.name}
+                {"  "}
+                {room.building && room.building.img && (
+                  <img
+                    src={`${Url}/uploads/${room.building.img}`}
+                    alt="Building"
+                    className="w-25 rounded shadow-sm mt-2"
+                  />
+                )}
               </p>
               <p>
                 <strong>Trạng thái:</strong>
+                {"  "}
+                {room.status === "OCCUPIED" ? "Đã thuê" : "Phòng trống"}
               </p>
 
-              <img
-                src={"https://via.placeholder.com/150"}
-                alt="User"
-                className="w-25 rounded-circle shadow-sm mt-2"
-              />
+              {/* Sửa phần hiển thị danh sách tenants */}
+              {room.tenants && room.tenants.length > 0 ? (
+                room.tenants.map((tenant) => (
+                  <div key={tenant.id}>
+                    <p>
+                      <strong>Người thuê: </strong> {tenant.username}
+                      {"  "}
+                      {tenant.img && (
+                        <img
+                          src={`${Url}/uploads/${tenant.img}`}
+                          alt="User"
+                          className="w-25 rounded-circle shadow-sm mt-2"
+                        />
+                      )}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p>Không có người thuê.</p>
+              )}
             </Col>
           </Row>
         </Card.Body>

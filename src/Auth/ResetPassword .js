@@ -24,7 +24,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <Row className="justify-content-md-center mt-5 shadow-lg">
+    <Row className="justify-content-md-center mt-5">
       <Col md={6}>
         <h2 className="text-center mb-4">Đặt lại mật khẩu</h2>
         <Form onSubmit={handleSubmit}>

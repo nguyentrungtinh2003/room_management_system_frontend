@@ -20,6 +20,7 @@ import ViewRoom from "./Pages/View/ViewRoom";
 import ForgotPassword from "./Auth/ForgotPassword";
 import ResetPassword from "./Auth/ResetPassword ";
 import SendMail from "./Auth/SendMail";
+import AddRoom from "./Pages/Add/AddRoom";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/viewBuilding/:id" element={<ViewBuilding />} />
         <Route path="/editBuilding/:id" element={<EditBuilding />} />
         <Route path="/viewRoom/:id" element={<ViewRoom />} />
+        <Route path="/addRoom" element={<AddRoom />} />
       </Routes>
     </Router>
   );

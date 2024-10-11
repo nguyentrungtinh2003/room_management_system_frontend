@@ -7,6 +7,7 @@ import { Badge } from "react-bootstrap";
 const Admin = () => {
   const [users, setUsers] = useState([]);
   const [buildings, setBuildings] = useState([]);
+  const [rooms, setRooms] = useState([]);
   // State quản lý mục được chọn
   const [selectedItem, setSelectedItem] = useState("users");
 
@@ -18,6 +19,7 @@ const Admin = () => {
   useEffect(() => {
     fetchUsers();
     fetchBuildings();
+    fetchRooms();
   }, []);
 
   const fetchUsers = () => {
@@ -39,6 +41,17 @@ const Admin = () => {
       })
       .catch((error) => {
         console.log("Get all buildings fail !", error);
+      });
+  };
+
+  const fetchRooms = () => {
+    axios
+      .get(`${Url}/api/rooms/all`)
+      .then((response) => {
+        setRooms(response.data);
+      })
+      .catch((error) => {
+        console.log("Get all room fail !", error);
       });
   };
 
@@ -392,7 +405,7 @@ const Admin = () => {
           )}
           {selectedItem === "roomDetails" && (
             <div>
-              <h3>Quản lí phòng</h3>
+              <h3 className="mt-2">Quản lí phòng</h3>
               {/* Nội dung form hoặc bảng cho quản lí phòng */}
               <div className="row mt-2">
                 <div className="col-6">
@@ -409,7 +422,7 @@ const Admin = () => {
                   </form>
                 </div>
               </div>
-              <a href="/addBuilding">
+              <a href="/addRoom">
                 <button className="btn btn-primary mt-2">
                   <i className="fas fa-add"></i>
                 </button>
@@ -429,45 +442,50 @@ const Admin = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {buildings.map((building) => {
+                  {rooms.map((room) => {
                     return (
-                      <tr key={building.id}>
-                        <td>{building.id}</td>
-                        <td>Phòng 1</td>
-                        <td>1200000 VND</td>
+                      <tr key={room.id}>
+                        <td>{room.id}</td>
+                        <td>{room.roomName}</td>
+                        <td>{room.rentPrice}</td>
                         <td>
                           <img
-                            src={`${Url}/uploads/${building.landlord.img}`}
-                            alt="Landlord Avatar"
+                            src={`${Url}/uploads/${room.img}`}
+                            alt="Room Avatar"
                             style={{ width: "50px" }}
                           />
                         </td>
 
-                        <td>Dãy phòng A</td>
+                        <td>{room.building.name}</td>
 
-                        <td>Trống</td>
+                        <td>
+                          {room.status == "OCCUPIED" ? (
+                            <Badge bg="success">
+                              <i className="fas fa-check"></i>
+                            </Badge>
+                          ) : (
+                            <Badge bg="danger">
+                              <i className="fas fa-close"></i>
+                            </Badge>
+                          )}
+                        </td>
                         <td>
                           {" "}
-                          <a href={`/viewBuilding/${building.id}`}>
+                          <a href={`/viewRoom/${room.id}`}>
                             <button className="btn btn-primary btn-sm me-2">
                               <i className="fas fa-eye"></i>
                             </button>
                           </a>
                         </td>
                         <td>
-                          <a href={`/editBuilding/${building.id}`}>
+                          <a href={`/editRoom/${room.id}`}>
                             <button className="btn btn-primary btn-sm me-2">
                               <i className="fas fa-edit"></i>
                             </button>
                           </a>
                         </td>
                         <td>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() =>
-                              handelDeleteBuilding(building.id, building.name)
-                            }
-                          >
+                          <button className="btn btn-danger btn-sm">
                             <i className="fas fa-trash-alt"></i>
                           </button>
                         </td>
