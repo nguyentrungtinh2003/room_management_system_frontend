@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Register from "./Auth/Register";
 import Admin from "./Pages/Admin";
 import Tenant from "./Pages/Tenant";
+import Landlord from "./Pages/Landlord";
 import ViewUser from "./Pages/View/ViewUser";
 import AddUser from "./Pages/Add/AddUser";
 import EditUser from "./Pages/Edit/EditUser";
@@ -36,6 +37,7 @@ function App() {
         <Route path="/sendMail" element={<SendMail />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/tenant" element={<Tenant />} />
+        <Route path="/landlord" element={<Landlord />} />
         <Route path="/viewUser/:id" element={<ViewUser />} />
         <Route path="/addUser" element={<AddUser />} />
         <Route path="/editUser/:id" element={<EditUser />} />
