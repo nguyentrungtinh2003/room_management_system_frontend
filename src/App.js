@@ -21,6 +21,7 @@ import ForgotPassword from "./Auth/ForgotPassword";
 import ResetPassword from "./Auth/ResetPassword ";
 import SendMail from "./Auth/SendMail";
 import AddRoom from "./Pages/Add/AddRoom";
+import EditRoom from "./Pages/Edit/EditRoom";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path="/editBuilding/:id" element={<EditBuilding />} />
         <Route path="/viewRoom/:id" element={<ViewRoom />} />
         <Route path="/addRoom" element={<AddRoom />} />
+        <Route path="/editRoom/:id" element={<EditRoom />} />
       </Routes>
     </Router>
   );

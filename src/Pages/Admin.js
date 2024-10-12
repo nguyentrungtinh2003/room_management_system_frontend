@@ -153,6 +153,31 @@ const Admin = () => {
     }
   };
 
+  const [searchRoom, setSearchRoom] = useState("");
+  const handleInputSearchRoomChange = (e) => {
+    setSearchRoom(e.target.value);
+  };
+
+  const handleSearchRoom = (e) => {
+    e.preventDefault();
+    if (searchRoom.trim() == "") {
+      fetchRooms();
+    } else {
+      axios
+        .get(`${Url}/api/rooms/search?name=${searchRoom}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((response) => {
+          setRooms(response.data);
+        })
+        .catch((error) => {
+          console.log("Search room fail!", error);
+        });
+    }
+  };
+
   return (
     <>
       <div className="row">
@@ -409,11 +434,13 @@ const Admin = () => {
               {/* Nội dung form hoặc bảng cho quản lí phòng */}
               <div className="row mt-2">
                 <div className="col-6">
-                  <form className="d-flex mt-2">
+                  <form className="d-flex mt-2" onSubmit={handleSearchRoom}>
                     <input
                       type="text"
                       className="form-control"
                       placeholder="Nhập tên phòng ..."
+                      value={searchRoom}
+                      onChange={handleInputSearchRoomChange}
                     />
 
                     <button className="btn btn-primary" type="submit">
