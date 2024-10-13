@@ -1,8 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import axios from "axios";
+import Url from "../Config/Url";
+import { Badge } from "react-bootstrap";
 
 const Home = () => {
+  const [buildings, setBuldings] = useState([]);
+  const [rooms, setRooms] = useState([]);
+
+  useEffect(() => {
+    fetchBuildings();
+    fetchRooms();
+  }, []);
+
+  const fetchBuildings = () => {
+    axios.get(`${Url}/api/buildings/all`).then((response) => {
+      setBuldings(response.data);
+    });
+  };
+
+  const fetchRooms = () => {
+    axios.get(`${Url}/api/rooms/all`).then((response) => {
+      setRooms(response.data);
+    });
+  };
   return (
     <>
       <div>
@@ -34,45 +56,23 @@ const Home = () => {
             ></button>
           </div>
           <div className="carousel-inner">
-            <div className="carousel-item active">
-              <img
-                src="https://blog.rever.vn/hubfs/cho_thue_phong_tro_moi_xay_gia_re_ngay_phuong_15_tan_binh3.jpg"
-                className="d-block w-100"
-                alt="..."
-              />
-              <div className="carousel-caption d-none d-md-block">
-                <h5>First slide label</h5>
-                <p>
-                  Some representative placeholder content for the first slide.
-                </p>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <img
-                src="https://img.homedy.com/store/images/2021/06/17/thiet-ke-phong-tro-phong-cach-chung-cu-mini-637595434354329293.jpg"
-                className="d-block w-100"
-                alt="..."
-              />
-              <div className="carousel-caption d-none d-md-block">
-                <h5>Second slide label</h5>
-                <p>
-                  Some representative placeholder content for the second slide.
-                </p>
-              </div>
-            </div>
-            <div className="carousel-item">
-              <img
-                src="https://trongoixaynha.com/wp-content/uploads/2022/10/thiet-ke-phong-tro-co-gac-lung-9.jpg"
-                className="d-block w-100"
-                alt="..."
-              />
-              <div className="carousel-caption d-none d-md-block">
-                <h5>Third slide label</h5>
-                <p>
-                  Some representative placeholder content for the third slide.
-                </p>
-              </div>
-            </div>
+            {buildings &&
+              buildings.map((building, index) => (
+                <div
+                  key={index}
+                  className={`carousel-item ${index == 0 ? "active" : ""}`}
+                >
+                  <img
+                    src={`${Url}/uploads/${building.img}`}
+                    className="d-block w-100"
+                    alt="..."
+                  />
+                  <div className="carousel-caption d-none d-md-block">
+                    <h5>{building.name}</h5>
+                    <p>{building.address}</p>
+                  </div>
+                </div>
+              ))}
           </div>
           <button
             className="carousel-control-prev"
@@ -101,71 +101,36 @@ const Home = () => {
         </div>
       </div>
       <div className="container mt-4">
+        <h2 className="text-center mb-4">Danh sách phòng</h2>
         <div className="row">
-          <div className="col-md-3">
-            <div className="card mb-4 shadow-sm">
-              <img
-                src="https://via.placeholder.com/1200x400"
-                className="card-img-top w-100"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Phòng 1</h5>
-                <p className="card-text">Giá : 1600000 VND</p>
-                <p className="card-text">Trống</p>
-                <a href="#" className="btn btn-primary">
-                  Chi tiết
-                </a>
+          {rooms &&
+            rooms.map((room) => (
+              <div className="col-md-3">
+                <div className="card mb-4 shadow-sm">
+                  <img
+                    src={`${Url}/uploads/${room.img}`}
+                    className="card-img-top w-100"
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{room.roomName}</h5>
+                    <p className="card-text">Giá : {room.rentPrice} VND</p>
+                    <p className="card-text">
+                      {room.status == "OCCUPIED" ? (
+                        <Badge bg="success">Đã thuê</Badge>
+                      ) : (
+                        <Badge bg="success">Phòng trống</Badge>
+                      )}
+                    </p>
+                    <a
+                      href={`/viewRoom/${room.id}`}
+                      className="btn btn-primary"
+                    >
+                      Xem
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="card mb-4 shadow-sm">
-              <img
-                src="https://via.placeholder.com/1200x400"
-                className="card-img-top w-100"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Phòng 1</h5>
-                <p className="card-text">Giá : 1600000 VND</p>
-                <p className="card-text">Trống</p>
-                <a href="#" className="btn btn-primary">
-                  Chi tiết
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="card mb-4 shadow-sm">
-              <img
-                src="https://via.placeholder.com/1200x400"
-                className="card-img-top w-100"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Phòng 1</h5>
-                <p className="card-text">Giá : 1600000 VND</p>
-                <p className="card-text">Trống</p>
-                <a href="#" className="btn btn-primary">
-                  Chi tiết
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-3">
-            <div className="card mb-4 shadow-sm">
-              <img
-                src="https://via.placeholder.com/1200x400"
-                className="card-img-top w-100"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Phòng 1</h5>
-                <p className="card-text">Giá : 1600000 VND</p>
-                <p className="card-text">Trống</p>
-                <a href="#" className="btn btn-primary">
-                  Chi tiết
-                </a>
-              </div>
-            </div>
-          </div>
+            ))}
         </div>
       </div>
     </>

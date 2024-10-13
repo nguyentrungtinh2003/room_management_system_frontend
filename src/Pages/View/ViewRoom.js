@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Url from "../../Config/Url";
-import { Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col, Badge } from "react-bootstrap";
 
 const ViewRoom = () => {
   const [room, setRoom] = useState({});
@@ -62,7 +62,11 @@ const ViewRoom = () => {
               <p>
                 <strong>Trạng thái:</strong>
                 {"  "}
-                {room.status === "OCCUPIED" ? "Đã thuê" : "Phòng trống"}
+                {room.status === "OCCUPIED" ? (
+                  <Badge bg="success">Đã thuê</Badge>
+                ) : (
+                  <Badge bg="success">Phòng trống</Badge>
+                )}
               </p>
 
               {/* Sửa phần hiển thị danh sách tenants */}

@@ -57,14 +57,38 @@ const Admin = () => {
 
   const handelDeleteUser = (id, name) => {
     const confirmDelete = window.confirm(
-      `Bạn có muốn xoá người dùng ${name} không ?`
+      `Bạn có muốn khoá người dùng ${name} không ?`
     );
     if (confirmDelete) {
       axios
         .delete(`${Url}/api/users/delete/${id}`)
         .then((response) => {
           console.log("Delete user success");
-          toast.success("Xoá người dùng thành công !", {
+          toast.success("Khoá người dùng thành công !", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          setTimeout(() => {
+            window.location.href = "/admin";
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log("Error delete user : ", error);
+        });
+    }
+  };
+
+  const handelUnlockUser = (id, name) => {
+    const confirmDelete = window.confirm(
+      `Bạn có muốn mở khoá người dùng ${name} không ?`
+    );
+    if (confirmDelete) {
+      axios
+        .put(`${Url}/api/users/unlock/${id}`)
+        .then((response) => {
+          console.log("Unlock user success");
+          toast.success("Mở khoá người dùng thành công !", {
             position: "top-right",
             autoClose: 3000,
             transition: Slide,
@@ -270,7 +294,8 @@ const Admin = () => {
                     <th scope="col">Trạng thái</th>
                     <th scope="col">Xem</th>
                     <th scope="col">Sửa</th>
-                    <th scope="col">Xoá</th>
+                    <th scope="col">Khoá</th>
+                    <th scope="col">Mở</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -291,13 +316,9 @@ const Admin = () => {
                         <td>{user.role}</td>
                         <td>
                           {user.enabled ? (
-                            <Badge bg="success">
-                              <i className="fas fa-check"></i>
-                            </Badge>
+                            <Badge bg="success">Hoạt động</Badge>
                           ) : (
-                            <Badge bg="danger">
-                              <i className="fas fa-close"></i>
-                            </Badge>
+                            <Badge bg="danger">Bị khoá</Badge>
                           )}
                         </td>
                         <td>
@@ -322,7 +343,17 @@ const Admin = () => {
                               handelDeleteUser(user.id, user.username)
                             }
                           >
-                            <i className="fas fa-trash-alt"></i>
+                            <i class="fas fa-lock"></i>
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() =>
+                              handelUnlockUser(user.id, user.username)
+                            }
+                          >
+                            <i class="fas fa-unlock"></i>
                           </button>
                         </td>
                       </tr>
@@ -487,13 +518,9 @@ const Admin = () => {
 
                         <td>
                           {room.status == "OCCUPIED" ? (
-                            <Badge bg="success">
-                              <i className="fas fa-check"></i>
-                            </Badge>
+                            <Badge bg="success">Đã thuê</Badge>
                           ) : (
-                            <Badge bg="danger">
-                              <i className="fas fa-close"></i>
-                            </Badge>
+                            <Badge bg="danger">Phòng trống</Badge>
                           )}
                         </td>
                         <td>

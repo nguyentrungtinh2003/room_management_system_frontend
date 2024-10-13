@@ -47,3 +47,10 @@
   background-color: #4169e1;
   color: white;
 }
+
+/* Carousel */
+.carousel-item img {
+  width: 100%; /* Chiếm toàn bộ chiều rộng của carousel */
+  height: 500px; /* Chiều cao cố định */
+  object-fit: cover; /* Đảm bảo ảnh luôn vừa vặn và không bị méo */
+}
