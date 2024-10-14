@@ -17,7 +17,7 @@ const Landlord = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    // fetchUsers();
     fetchBuildings();
   }, []);
 
@@ -27,16 +27,16 @@ const Landlord = () => {
     }
   }, [buildings]);
 
-  const fetchUsers = () => {
-    axios
-      .get(`${Url}/api/users/all`)
-      .then((response) => {
-        setUsers(response.data);
-      })
-      .catch((error) => {
-        console.log("Get all users fail !", error);
-      });
-  };
+  // const fetchUsers = () => {
+  //   axios
+  //     .get(`${Url}/api/users/all`)
+  //     .then((response) => {
+  //       setUsers(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log("Get all users fail !", error);
+  //     });
+  // };
 
   const fetchBuildings = () => {
     axios
@@ -52,7 +52,7 @@ const Landlord = () => {
   const fetchRooms = async () => {
     try {
       const roomRequest = buildings.map((building) => {
-        axios.get(`${Url}/api/rooms/buildingId/${building.id}`);
+        return axios.get(`${Url}/api/rooms/buildingId/${building.id}`);
       });
       const roomResponse = await Promise.all(roomRequest);
       const allRoom = roomResponse.flatMap((res) => {
@@ -64,6 +64,8 @@ const Landlord = () => {
         }
       });
       setRooms(allRoom);
+      const allTenants = allRoom.flatMap((room) => room.tenants);
+      setUsers(allTenants);
     } catch (error) {
       console.log("Có lỗi : ", error);
     }
@@ -125,7 +127,7 @@ const Landlord = () => {
   const handleSearchUser = (e) => {
     e.preventDefault();
     if (searchUser.trim() == "") {
-      fetchUsers();
+      // fetchUsers();
     } else {
       axios
         .get(`${Url}/api/users/search?username=${searchUser}`, {
@@ -305,13 +307,9 @@ const Landlord = () => {
                         <td>{user.role}</td>
                         <td>
                           {user.enabled ? (
-                            <Badge bg="success">
-                              <i className="fas fa-check"></i>
-                            </Badge>
+                            <Badge bg="success">Hoạt động</Badge>
                           ) : (
-                            <Badge bg="danger">
-                              <i className="fas fa-close"></i>
-                            </Badge>
+                            <Badge bg="danger">Bị khoá</Badge>
                           )}
                         </td>
                         <td>
@@ -501,13 +499,9 @@ const Landlord = () => {
 
                         <td>
                           {room.status == "OCCUPIED" ? (
-                            <Badge bg="success">
-                              <i className="fas fa-check"></i>
-                            </Badge>
+                            <Badge bg="success">Đã thuê</Badge>
                           ) : (
-                            <Badge bg="danger">
-                              <i className="fas fa-close"></i>
-                            </Badge>
+                            <Badge bg="danger">Phòng trống</Badge>
                           )}
                         </td>
                         <td>

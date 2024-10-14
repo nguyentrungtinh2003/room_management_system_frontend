@@ -1,6 +1,38 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Url from "../Config/Url";
+import { ToastContainer, toast, Slide } from "react-toastify";
+import { Badge } from "react-bootstrap";
 
 const Tenant = () => {
+  const [user, setUser] = useState({});
+  const [room, setRoom] = useState([]);
+  useEffect(() => {
+    fetchUser();
+    fetchRoom();
+  }, []);
+
+  const fetchUser = () => {
+    axios
+      .get(`${Url}/api/users/${localStorage.getItem("id")}`)
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log("Get user by id fail !");
+      });
+  };
+
+  const fetchRoom = () => {
+    axios
+      .get(`${Url}/api/rooms/userId/${localStorage.getItem("id")}`)
+      .then((response) => {
+        setRoom(response.data);
+      })
+      .catch((error) => {
+        console.log("Get user by id fail !");
+      });
+  };
   return (
     <>
       <div className="row">
@@ -8,73 +40,65 @@ const Tenant = () => {
           <div className="card">
             <h3>Thông tin người thuê</h3>
             <img
-              className="img rounded-circle m-2 w-50"
-              src="https://via.placeholder.com/100"
+              className="img rounded m-2 w-50"
+              src={`${Url}/uploads/${user.img}`}
               alt="Người thuê"
             />
             <div className="card-body">
-              <h5 className="card-title">Nguyễn Văn A</h5>
-              <p className="card-text">0798948708</p>
-              <p className="card-text">Long An</p>
-              <p className="card-text">trungtinhn300@gmail.com</p>
+              <h5 className="card-title">{user.username}</h5>
+              <p className="card-text">{user.phoneNumber}</p>
+              <p className="card-text">{user.address}</p>
+              <p className="card-text">{user.email}</p>
               <a href="#" className="btn btn-primary">
-                Go somewhere
+                Xem
               </a>
             </div>
           </div>
         </div>
         <div className="col-9 mt-2">
           <h3 className="mb-3">Số người ở trong phòng</h3>
-          <h4 className="mb-4">3 người</h4>
+          <h4 className="mb-4">
+            {room.length > 0 && (
+              <Badge>
+                {room.reduce((acc, ro) => acc + ro.tenants.length, 0)}{" "}
+                <i className="fas fa-user"></i>
+              </Badge>
+            )}
+          </h4>
           <table className="table table-bordered table-striped">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Họ tên</th>
-                <th>Tuổi</th>
-                <th>Chức năng</th>
+                <th>Tên phòng</th>
+                <th>Dãy phòng</th>
+                <th>Chủ trọ</th>
+                <th>Hình chủ trọ</th>
+                <th>Người thuê</th>
+                <th>Giá</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Nguyễn Văn B</td>
-                <td>25</td>
-                <td>
-                  <button className="btn btn-primary btn-sm me-2">
-                    <i className="fas fa-edit"></i> Sửa
-                  </button>
-                  <button className="btn btn-danger btn-sm">
-                    <i className="fas fa-trash-alt"></i> Xoá
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Trần Văn C</td>
-                <td>30</td>
-                <td>
-                  <button className="btn btn-primary btn-sm me-2">
-                    <i className="fas fa-edit"></i> Sửa
-                  </button>
-                  <button className="btn btn-danger btn-sm">
-                    <i className="fas fa-trash-alt"></i> Xoá
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Lê Văn D</td>
-                <td>28</td>
-                <td>
-                  <button className="btn btn-primary btn-sm me-2">
-                    <i className="fas fa-edit"></i> Sửa
-                  </button>
-                  <button className="btn btn-danger btn-sm">
-                    <i className="fas fa-trash-alt"></i> Xoá
-                  </button>
-                </td>
-              </tr>
+              {room.map((ro) => (
+                <tr key={ro.id}>
+                  <td>{ro.id}</td>
+                  <td>{ro.roomName}</td>
+                  <td>{ro.building.name}</td>
+                  <td>{ro.building.landlord.username}</td>
+                  <td>
+                    <img
+                      src={`${Url}/uploads/${ro.building.landlord.img}`}
+                      alt="User Avatar"
+                      style={{ width: "50px" }}
+                    />
+                  </td>
+                  <td>
+                    {ro.tenants.map((ten) => (
+                      <Badge variant="secondary">{ten.username}</Badge>
+                    ))}
+                  </td>
+                  <td>{ro.rentPrice} VND</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
