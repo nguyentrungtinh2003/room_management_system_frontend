@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Url from "../Config/Url";
 import { ToastContainer, toast, Slide } from "react-toastify";
-import { Badge } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -11,26 +11,53 @@ const Admin = () => {
   // State quản lý mục được chọn
   const [selectedItem, setSelectedItem] = useState("users");
 
+  const [currentPageUser, setCurrentPageUser] = useState(0);
+  const [totalPagesUser, setTotalPagesUser] = useState(1);
+  const [sortByUser, setSortByUser] = useState("username");
+  const [sortDirUser, setSortDirUser] = useState("asc");
+
+  const pageSize = 3;
+
   // Hàm để xử lý khi người dùng chọn một mục từ danh sách
   const handleItemClick = (item) => {
     setSelectedItem(item);
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(currentPageUser, sortByUser, sortDirUser);
     fetchBuildings();
     fetchRooms();
-  }, []);
+  }, [currentPageUser, sortByUser, sortDirUser]);
 
-  const fetchUsers = () => {
-    axios
-      .get(`${Url}/api/users/all`)
+  const fetchUsers = async (
+    page = 0,
+    sortByUser = "username",
+    sortDirUser = "asc"
+  ) => {
+    await axios
+      .get(
+        `${Url}/api/users/page?page=${page}&size=${pageSize}&sortBy=${sortByUser}&sortDir=${sortDirUser} `
+      )
       .then((response) => {
-        setUsers(response.data);
+        setUsers(response.data.content);
+        setCurrentPageUser(response.data.pageable.pageNumber); // Thay đổi ở đây
+        setTotalPagesUser(response.data.totalPages);
       })
       .catch((error) => {
         console.log("Get all users fail !", error);
       });
+  };
+
+  // Hàm chuyển hướng trang
+  const goToPage = (page) => {
+    if (page >= 0 && page < totalPagesUser) {
+      setCurrentPageUser(page);
+    }
+  };
+
+  // Hàm đổi hướng sắp xếp
+  const toggleSortDir = () => {
+    setSortDirUser((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
   const fetchBuildings = () => {
@@ -282,11 +309,21 @@ const Admin = () => {
                   <i className="fas fa-add"></i>
                 </button>
               </a>
+              <Button onClick={toggleSortDir} className="m-3">
+                <i className="fas fa-filter"></i> Tên:{" "}
+                {sortDirUser.toUpperCase() === "asc" ? (
+                  <i className="fas fa-sort-up"></i> // Biểu tượng cho sắp xếp tăng dần
+                ) : (
+                  <i className="fas fa-sort-down"></i> // Biểu tượng cho sắp xếp giảm dần
+                )}
+              </Button>
               <table className="table table-striped mt-2">
                 <thead>
                   <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">Họ tên</th>
+                    <th onClick={() => setSortByUser("username")} scope="col">
+                      Họ tên
+                    </th>
                     <th scope="col">Email</th>
                     <th scope="col">SĐT</th>
                     <th scope="col">Hình</th>
@@ -361,6 +398,25 @@ const Admin = () => {
                   })}
                 </tbody>
               </table>
+              <div className="d-flex m-3">
+                <Button
+                  className="m-2"
+                  onClick={() => goToPage(currentPageUser - 1)}
+                  disabled={currentPageUser === 0}
+                >
+                  <i className="fas fa-arrow-left"></i>
+                </Button>
+                <span className="m-2">
+                  Trang {currentPageUser + 1} / {totalPagesUser}
+                </span>
+                <Button
+                  className="m-2"
+                  onClick={() => goToPage(currentPageUser + 1)}
+                  disabled={currentPageUser + 1 === totalPagesUser}
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </Button>
+              </div>
             </div>
           )}
           {selectedItem === "rooms" && (
