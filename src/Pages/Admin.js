@@ -11,10 +11,17 @@ const Admin = () => {
   // State quản lý mục được chọn
   const [selectedItem, setSelectedItem] = useState("users");
 
+  // Page users
   const [currentPageUser, setCurrentPageUser] = useState(0);
   const [totalPagesUser, setTotalPagesUser] = useState(1);
   const [sortByUser, setSortByUser] = useState("username");
   const [sortDirUser, setSortDirUser] = useState("asc");
+
+  // Page buildings
+  const [currentPageBuilding, setCurrentPageBuilding] = useState(0);
+  const [totalPagesBuilding, setTotalPagesBuilding] = useState(1);
+  const [sortByBuilding, setSortByBuilding] = useState("name");
+  const [sortDirBuilding, setSortDirBuilding] = useState("asc");
 
   const pageSize = 3;
 
@@ -25,9 +32,16 @@ const Admin = () => {
 
   useEffect(() => {
     fetchUsers(currentPageUser, sortByUser, sortDirUser);
-    fetchBuildings();
+    fetchBuildings(currentPageBuilding, sortByBuilding, sortDirBuilding);
     fetchRooms();
-  }, [currentPageUser, sortByUser, sortDirUser]);
+  }, [
+    currentPageUser,
+    sortByUser,
+    sortDirUser,
+    currentPageBuilding,
+    sortByBuilding,
+    sortDirBuilding,
+  ]);
 
   const fetchUsers = async (
     page = 0,
@@ -49,26 +63,46 @@ const Admin = () => {
   };
 
   // Hàm chuyển hướng trang
-  const goToPage = (page) => {
+  const goToPageUser = (page) => {
     if (page >= 0 && page < totalPagesUser) {
       setCurrentPageUser(page);
     }
   };
 
   // Hàm đổi hướng sắp xếp
-  const toggleSortDir = () => {
+  const toggleSortDirUser = () => {
     setSortDirUser((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
-  const fetchBuildings = () => {
-    axios
-      .get(`${Url}/api/buildings/all`)
+  const fetchBuildings = async (
+    page = 0,
+    sortByBuilding = "name",
+    sortDirBuilding = "asc"
+  ) => {
+    await axios
+      .get(
+        `${Url}/api/buildings/page?page=${page}&size=${pageSize}&sortBy=${sortByBuilding}&sortDir=${sortDirBuilding} `
+      )
       .then((response) => {
-        setBuildings(response.data);
+        setBuildings(response.data.content);
+        setCurrentPageBuilding(response.data.pageable.pageNumber); // Thay đổi ở đây
+        setTotalPagesBuilding(response.data.totalPages);
       })
       .catch((error) => {
         console.log("Get all buildings fail !", error);
       });
+  };
+
+  // Hàm chuyển hướng trang
+  const goToPageBuilding = (page) => {
+    if (page >= 0 && page < totalPagesBuilding) {
+      setCurrentPageBuilding(page);
+    }
+  };
+
+  // Hàm đổi hướng sắp xếp
+  const toggleSortDirBuilding = () => {
+    setSortDirBuilding((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
   const fetchRooms = () => {
@@ -309,7 +343,7 @@ const Admin = () => {
                   <i className="fas fa-add"></i>
                 </button>
               </a>
-              <Button onClick={toggleSortDir} className="m-3">
+              <Button onClick={toggleSortDirUser} className="m-3">
                 <i className="fas fa-filter"></i> Tên:{" "}
                 {sortDirUser.toUpperCase() === "asc" ? (
                   <i className="fas fa-sort-up"></i> // Biểu tượng cho sắp xếp tăng dần
@@ -401,7 +435,7 @@ const Admin = () => {
               <div className="d-flex m-3">
                 <Button
                   className="m-2"
-                  onClick={() => goToPage(currentPageUser - 1)}
+                  onClick={() => goToPageUser(currentPageUser - 1)}
                   disabled={currentPageUser === 0}
                 >
                   <i className="fas fa-arrow-left"></i>
@@ -411,7 +445,7 @@ const Admin = () => {
                 </span>
                 <Button
                   className="m-2"
-                  onClick={() => goToPage(currentPageUser + 1)}
+                  onClick={() => goToPageUser(currentPageUser + 1)}
                   disabled={currentPageUser + 1 === totalPagesUser}
                 >
                   <i className="fas fa-arrow-right"></i>
@@ -445,6 +479,14 @@ const Admin = () => {
                   <i className="fas fa-add"></i>
                 </button>
               </a>
+              <Button onClick={toggleSortDirBuilding} className="m-3">
+                <i className="fas fa-filter"></i> Tên:{" "}
+                {sortDirBuilding.toUpperCase() === "asc" ? (
+                  <i className="fas fa-sort-up"></i> // Biểu tượng cho sắp xếp tăng dần
+                ) : (
+                  <i className="fas fa-sort-down"></i> // Biểu tượng cho sắp xếp giảm dần
+                )}
+              </Button>
               <table className="table table-striped mt-2">
                 <thead>
                   <tr>
@@ -513,6 +555,25 @@ const Admin = () => {
                   })}
                 </tbody>
               </table>
+              <div className="d-flex m-3">
+                <Button
+                  className="m-2"
+                  onClick={() => goToPageBuilding(currentPageBuilding - 1)}
+                  disabled={currentPageBuilding === 0}
+                >
+                  <i className="fas fa-arrow-left"></i>
+                </Button>
+                <span className="m-2">
+                  Trang {currentPageBuilding + 1} / {totalPagesBuilding}
+                </span>
+                <Button
+                  className="m-2"
+                  onClick={() => goToPageBuilding(currentPageBuilding + 1)}
+                  disabled={currentPageBuilding + 1 === totalPagesBuilding}
+                >
+                  <i className="fas fa-arrow-right"></i>
+                </Button>
+              </div>
             </div>
           )}
           {selectedItem === "roomDetails" && (
