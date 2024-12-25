@@ -46,6 +46,11 @@ const AddBuilding = () => {
       }, 3000);
     } catch (error) {
       console.error("There was an error add building !", error);
+      toast.error("Tạo dãy phòng thất bại !", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Slide,
+      });
     }
   };
 

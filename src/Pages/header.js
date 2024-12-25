@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { UserContext } from "../Context/UserContext";
 import Url from "../Config/Url";
+import { Badge } from "react-bootstrap";
 
 const Header = () => {
   const user = {
@@ -50,12 +51,25 @@ const Header = () => {
                     }`}
                     className="nav-link"
                   >
-                    <img
-                      src={`${Url}/uploads/${user.img}`}
-                      alt="User Avatar"
-                      style={{ width: "40px", borderRadius: "50%" }}
-                      className="user-avatar"
-                    />
+                    <div className="profile-info position-relative">
+                      <img
+                        src={`${Url}/uploads/${user.img}`}
+                        alt="User Avatar"
+                        style={{ width: "50px", height: "50px" }}
+                        className="img-fluid rounded-circle"
+                      />
+                      <Badge
+                        pill
+                        bg="success"
+                        className="position-absolute bottom-0 end-0 translate-middle p-2"
+                        style={{ width: "10px", height: "10px" }}
+                      >
+                        <i
+                          className="fas fa-circle"
+                          style={{ fontSize: "2px" }}
+                        ></i>
+                      </Badge>
+                    </div>
                   </a>
                 </li>
                 <li className="nav-item">

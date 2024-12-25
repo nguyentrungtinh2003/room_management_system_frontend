@@ -53,6 +53,11 @@ const AddUser = () => {
       }, 3000);
     } catch (error) {
       console.error("There was an error registering the user!", error);
+      toast.error("Tạo người dùng thất bại !", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Slide,
+      });
     }
   };
 

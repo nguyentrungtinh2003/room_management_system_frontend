@@ -89,6 +89,11 @@ const EditUser = () => {
       }, 3000);
     } catch (error) {
       console.error("Có lỗi xảy ra khi cập nhật người dùng!", error);
+      toast.error("Cập nhật người dùng thất bại !", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Slide,
+      });
     }
   };
 
